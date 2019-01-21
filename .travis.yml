@@ -1,0 +1,14 @@
+sudo: required
+
+services:
+  - docker
+
+script:
+  - docker build . --squash -t umweltdk/k8s-deploy 
+
+deploy:
+  provider: script
+  script: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker push umweltdk/k8s-deploy:latest
+  on:
+    repo: 'umweltdk/docker-node'
+    branch: master
