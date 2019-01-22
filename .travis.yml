@@ -1,13 +1,10 @@
 sudo: required
-addons:
-  apt:
-    packages:
-      - docker-ce
 
-before_script:
-  - docker version
+services:
+  - docker
+
 script:
-  - docker build --pull --squash -t umweltdk/k8s-deploy .
+  - docker build --pull -t umweltdk/k8s-deploy .
 
 deploy:
   provider: script
