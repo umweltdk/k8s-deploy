@@ -5,34 +5,34 @@ services:
   - docker
 
 env:
-  - 'NIXPKGS=nixos-unstable ATTR=helm.\"2.11.0\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.11.5\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.11.6\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.12.0\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.12.1\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.12.2\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.12.3\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.13.1\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.13.2\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.13.3\"'
-  - 'NIXPKGS=nixos-unstable ATTR=kubectl.\"1.13.4\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=helm.\"2.11.0\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.11.5\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.11.6\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.12.0\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.12.1\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.12.2\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.12.3\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.13.1\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.13.2\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.13.3\"'
-  - 'NIXPKGS=nixos-18.09 ATTR=kubectl.\"1.13.4\"'
+  - NIXPKGS=nixos-unstable CMD=helm VERSION=2.11.0
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.11.5
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.11.6
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.12.0
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.12.1
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.12.2
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.12.3
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.13.1
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.13.2
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.13.3
+  - NIXPKGS=nixos-unstable CMD=kubectl VERSION=1.13.4
+  - NIXPKGS=nixos-18.09 CMD=helm VERSION=2.11.0
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.11.5
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.11.6
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.12.0
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.12.1
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.12.2
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.12.3
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.13.1
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.13.2
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.13.3
+  - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.13.4
 
 script:
   - nix-env -iA cachix -f https://cachix.org/api/v1/install
   - cachix authtoken $CACHIX_AUTHTOKEN
   - cachix use k8s-deploy
-  - nix-build --no-out-link -I nixpkgs=channel:$NIXPKGS -A "$ATTR" default.nix | cachix push k8s-deploy
+  - nix-build --no-out-link -I nixpkgs=channel:$NIXPKGS -A "$CMD.\"$VERSION\"" default.nix | cachix push k8s-deploy
 
 jobs:
   include:
