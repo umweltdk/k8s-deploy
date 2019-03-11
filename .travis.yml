@@ -5,23 +5,40 @@ services:
   - docker
 
 env:
-  - NIXPKGS=channel:nixos-18.09
-  - NIXPKGS=channel:nixos-unstable
+  - NIXPKGS=nixos-18.09
+  - NIXPKGS=nixos-unstable
+  - ATTR=helm.\"2.11.0\"
+  - ATTR=kubectl.\"1.11.5\"
+  - ATTR=kubectl.\"1.11.6\"
+  - ATTR=kubectl.\"1.12.0\"
+  - ATTR=kubectl.\"1.12.1\"
+  - ATTR=kubectl.\"1.12.2\"
+  - ATTR=kubectl.\"1.12.3\"
+  - ATTR=kubectl.\"1.13.1\"
+  - ATTR=kubectl.\"1.13.2\"
+  - ATTR=kubectl.\"1.13.3\"
+  - ATTR=kubectl.\"1.13.4\"
 
 script:
   - nix-env -iA cachix -f https://cachix.org/api/v1/install
   - cachix authtoken $CACHIX_AUTHTOKEN
   - cachix use k8s-deploy
-  - nix-build --no-out-link -I nixpkgs=$NIXPKGS -A all default.nix | cachix push k8s-deploy
-  - 'docker build --pull --build-arg=nixpkgs=$NIXPKGS -t umweltdk/k8s-deploy:nix -f Dockerfile_nix .'
-  - docker build --pull -t umweltdk/k8s-deploy .
+  - nix-build --no-out-link -I nixpkgs=channel:$NIXPKGS -A "$ATTR" default.nix | cachix push k8s-deploy
 
-deploy:
-  provider: script
-  script:
-    - echo -n "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - docker push umweltdk/k8s-deploy:latest
-    - docker push umweltdk/k8s-deploy:nix
-  on:
-    repo: 'umweltdk/k8s-deploy'
-    branch: master
+jobs:
+  include:
+    - stage: deploy
+      script:
+        - 'docker build --pull -t umweltdk/k8s-deploy:$TRAVIS_BUILD_NUMBER .'
+        - 'docker build --pull --build-arg nixpkgs=channel:nixos-18.09 -t umweltdk/k8s-deploy:nixos-18.09 -f Dockerfile_nix .'
+        - 'docker build --pull --build-arg nixpkgs=channel:nixos-unstable -t umweltdk/k8s-deploy:nixos-unstable -f Dockerfile_nix .'
+      deploy:
+        provider: script
+        script:
+          - echo -n "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          - docker push umweltdk/k8s-deploy:latest
+          - docker push umweltdk/k8s-deploy:nixos-18.09
+          - docker push umweltdk/k8s-deploy:nixos-unstable
+        on:
+          repo: 'umweltdk/k8s-deploy'
+          branch: master
