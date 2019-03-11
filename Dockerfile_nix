@@ -1,0 +1,9 @@
+FROM nixorg/nix
+RUN nix-env -iA cachix -f https://cachix.org/api/v1/install
+ARG nixpkgs
+WORKDIR /app
+ENV USER root
+COPY . /app
+RUN nix-env --version && \
+  cachix use k8s-deploy && \
+  nix-env -I nixpkgs=$nixpkgs -iA all -f default.nix

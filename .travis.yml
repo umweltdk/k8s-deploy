@@ -1,14 +1,27 @@
+language: nix
 sudo: required
 
 services:
   - docker
 
+env:
+  - NIXPKGS=channel:nixos-18.09
+  - NIXPKGS=channel:nixos-unstable
+
 script:
+  - nix-env -iA cachix -f https://cachix.org/api/v1/install
+  - cachix authtoken $CACHIX_AUTHTOKEN
+  - cachix use k8s-deploy
+  - nix-build --no-out-link -I nixpkgs=$NIXPKGS -A all default.nix | cachix push k8s-deploy
+  - 'docker build --pull --build-arg=nixpkgs=$NIXPKGS -t umweltdk/k8s-deploy:nix -f Dockerfile_nix .'
   - docker build --pull -t umweltdk/k8s-deploy .
 
 deploy:
   provider: script
-  script: echo -n "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin && docker push umweltdk/k8s-deploy:latest
+  script:
+    - echo -n "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker push umweltdk/k8s-deploy:latest
+    - docker push umweltdk/k8s-deploy:nix
   on:
     repo: 'umweltdk/k8s-deploy'
     branch: master
