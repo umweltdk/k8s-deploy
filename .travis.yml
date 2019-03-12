@@ -43,11 +43,7 @@ jobs:
         - 'docker build --pull --build-arg nixpkgs=channel:nixos-unstable -t umweltdk/k8s-deploy:nixos-unstable -f Dockerfile_nix .'
       deploy:
         provider: script
-        script:
-          - echo -n "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-          - docker push umweltdk/k8s-deploy:latest
-          - docker push umweltdk/k8s-deploy:nixos-18.09
-          - docker push umweltdk/k8s-deploy:nixos-unstable
+        script: "ci/deploy.sh"
         on:
           repo: 'umweltdk/k8s-deploy'
           branch: master
