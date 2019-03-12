@@ -28,10 +28,12 @@ env:
   - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.13.3
   - NIXPKGS=nixos-18.09 CMD=kubectl VERSION=1.13.4
 
-script:
+before_install:
   - nix-env -iA cachix -f https://cachix.org/api/v1/install
   - cachix authtoken $CACHIX_AUTHTOKEN
   - cachix use k8s-deploy
+
+script:
   - nix-build --no-out-link -I nixpkgs=channel:$NIXPKGS -A "all.$CMD.\"$VERSION\"" nix/default.nix | cachix push k8s-deploy
 
 jobs:
