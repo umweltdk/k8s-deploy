@@ -5,10 +5,15 @@ let
     kubectl-all = super.callPackage ./kubernetes {};
   };
   pkgs = import nixpkgs { overlays = [ overlay ]; };
-  lnpkgs = dir: all: pkgs.lib.mapAttrsToList (n: v: "ln -s ${v} $out/${dir}/${n}") all;
+  lnpkgs = dir: all: pkgs.lib.mapAttrsToList (n: v: "ln -s ${v} $out/share/k8s-deploy/${dir}/${n}") all;
   selectAttrs = set: list: builtins.listToAttrs (map (x: {name = x; value = set.${x}; }) list);
 in
 rec {
+  dependencies = pkgs.buildEnv {
+    name = "k8s-deploy-bin";
+    paths = with pkgs; [ ./. lastpass-cli ];
+    pathsToLink = [ "/bin" ];
+  };
   all = {
     helm = pkgs.kubernetes-helm-all.packages;
     kubectl = pkgs.kubectl-all.packages;
@@ -17,14 +22,17 @@ rec {
     helm = selectAttrs all.helm ["2.11.0"];
     kubectl = selectAttrs all.kubectl ["1.11.5"];
   };
-  linked = pkgs.stdenvNoCC.mkDerivation {
-    name = "k8s-deploy-dependencies";
+  package = pkgs.stdenvNoCC.mkDerivation {
+    name = "k8s-deploy";
     src = ./.;
     buildCommand = ''
-      mkdir -p $out/helm
-      mkdir -p $out/kubectl
+      mkdir -p $out/share/k8s-deploy
+      cp -a $src/share/* $out/share/k8s-deploy/
+      mkdir -p $out/share/k8s-deploy/helm
+      mkdir -p $out/share/k8s-deploy/kubectl
       ${pkgs.lib.concatStringsSep "\n" (lnpkgs "helm" supported.helm)}
       ${pkgs.lib.concatStringsSep "\n" (lnpkgs "kubectl" supported.kubectl)}
+      ln -s ${dependencies}/bin $out/bin
     '';
   };
 }
