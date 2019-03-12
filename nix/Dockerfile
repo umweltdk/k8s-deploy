@@ -6,4 +6,4 @@ ENV USER root
 COPY . /opt/k8s-deploy-dependencies/
 RUN nix-env --version && \
   cachix use k8s-deploy && \
-  nix-build -I nixpkgs=$nixpkgs -o k8s-deploy -A all /opt/k8s-deploy-dependencies/default.nix
+  nix-build -I nixpkgs=$nixpkgs -o k8s-deploy -A linked /opt/k8s-deploy-dependencies/default.nix
