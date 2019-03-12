@@ -39,7 +39,9 @@ jobs:
     - stage: deploy
       script:
         - 'docker build --pull -t umweltdk/k8s-deploy .'
+        - 'nix-build --no-out-link -I nixpkgs=channel:nixos-18.09 -A all nix/default.nix | cachix push k8s-deploy'
         - 'docker build --pull --build-arg nixpkgs=channel:nixos-18.09 -t umweltdk/k8s-deploy:nixos-18.09 nix'
+        - 'nix-build --no-out-link -I nixpkgs=channel:nixos-unstable -A all nix/default.nix | cachix push k8s-deploy'
         - 'docker build --pull --build-arg nixpkgs=channel:nixos-unstable -t umweltdk/k8s-deploy:nixos-unstable nix'
       deploy:
         provider: script
