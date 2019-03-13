@@ -11,7 +11,7 @@ in
 rec {
   dependencies = pkgs.buildEnv {
     name = "k8s-deploy-bin";
-    paths = with pkgs; [ ./. lastpass-cli ];
+    paths = with pkgs; [ ./. lastpass-cli gawk perl ];
     pathsToLink = [ "/bin" ];
   };
   all = {
