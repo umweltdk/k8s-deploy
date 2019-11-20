@@ -5,7 +5,7 @@ in {
   packages = {
     "2.15.1" = pkgs.callPackage ./2 {
       version = "2.15.1";
-      sha256 = "0gx5gmj1470q3gj8v043dmm31skf83p1ckzdcfzx8wdjlglsljrj";
+      sha256 = "1afbymgpax7kgjjv1c9xb4dm7gcrhn2g69piamdq1k0ng348k5w0";
     };
   };
 }
