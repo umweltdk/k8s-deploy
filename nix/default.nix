@@ -9,6 +9,7 @@ let
   selectAttrs = set: list: builtins.listToAttrs (map (x: {name = x; value = set.${x}; }) list);
 in
 rec {
+  inherit overlay;
   dependencies = pkgs.buildEnv {
     name = "k8s-deploy-bin";
     paths = with pkgs; [ ./. lastpass-cli gawk perl ];
