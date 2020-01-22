@@ -21,7 +21,7 @@ rec {
   };
   supported = {
     helm = selectAttrs all.helm ["2.15.1"];
-    kubectl = selectAttrs all.kubectl ["1.11.5" "1.14.3"];
+    kubectl = selectAttrs all.kubectl ["1.11.5" "1.14.3" "1.14"];
   };
   package = pkgs.stdenvNoCC.mkDerivation {
     name = "k8s-deploy";

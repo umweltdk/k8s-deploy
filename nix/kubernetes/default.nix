@@ -9,5 +9,9 @@
       version = "1.14.3";
       sha256 = "1r31ssf8bdbz8fdsprhkc34jqhz5rcs3ixlf0mbjcbq0xr7y651z";
     };
+    "1.14" = callPackage ./1_14.nix {
+      version = "1.14.3";
+      sha256 = "1r31ssf8bdbz8fdsprhkc34jqhz5rcs3ixlf0mbjcbq0xr7y651z";
+    };
   };
 }
