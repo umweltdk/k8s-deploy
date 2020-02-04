@@ -12,7 +12,7 @@ rec {
   inherit overlay;
   dependencies = pkgs.buildEnv {
     name = "k8s-deploy-bin";
-    paths = with pkgs; [ ./. lastpass-cli gawk perl ];
+    paths = with pkgs; [ ./. lastpass-cli gawk perl awscli ];
     pathsToLink = [ "/bin" ];
   };
   all = {
